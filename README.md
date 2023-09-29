@@ -1,3 +1,11 @@
+# Trabajo Parcial
+Programación Concurrente y Distribuida
+
+## Integrantes :
+- Guillén Rojas, Daniel Carlos		U201920113
+- Wu Pan, Tito Peng 			U201921200
+- Sebastian Gonzales			U201923816
+
 # Planteamiento del problema
 
 La pandemia de COVID-19 ha tenido un impacto significativo en Perú y en todo el mundo. La realización de pruebas moleculares para detectar el virus es una parte crucial de la estrategia de control de la enfermedad. El objetivo de este proyecto es realizar un análisis epidemiológico de las pruebas moleculares de COVID-19 realizadas en Perú hasta septiembre de 2023, utilizando el dataset proporcionado por el Instituto Nacional de Salud (INS).
