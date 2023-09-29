@@ -2,7 +2,7 @@
 
 La pandemia de COVID-19 ha tenido un impacto significativo en Perú y en todo el mundo. La realización de pruebas moleculares para detectar el virus es una parte crucial de la estrategia de control de la enfermedad. El objetivo de este proyecto es realizar un análisis epidemiológico de las pruebas moleculares de COVID-19 realizadas en Perú hasta septiembre de 2023, utilizando el dataset proporcionado por el Instituto Nacional de Salud (INS).
 
-Objetivos del Estudio:
+## Objetivos del Estudio:
 - Seguimiento Temporal: Analizar la evolución temporal del número de pruebas moleculares realizadas en Perú desde el inicio de la pandemia hasta septiembre de 2023.
 - Distribución Geográfica: Evaluar la distribución geográfica de las pruebas moleculares, identificando las regiones o departamentos con mayor actividad de pruebas.
 - Resultados de las Pruebas: Calcular la tasa de positividad de las pruebas moleculares, es decir, la proporción de pruebas que resultaron positivas para COVID-19.
