@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"log"
 	"os"
-	"sort"
 	"strconv"
 	"strings"
 	"sync"
@@ -13,7 +12,8 @@ import (
 )
 
 type CovidTest struct {
-	Year string
+	Year      string
+	Resultado string
 }
 
 func main() {
@@ -28,20 +28,35 @@ func main() {
 
 	// Map: Divide las pruebas en grupos por año
 	mapperResult := make(map[string]int)
+	totalTests := 0
+	positiveTests := 0
+	negativeTests := 0
 	var mutex sync.Mutex
 
-	// Función para el proceso de Map
+	// Función para el proceso de Map concurrente
 	mapFunction := func(tests []CovidTest, wg *sync.WaitGroup) {
 		defer wg.Done()
+		localPositiveTests := 0
+		localNegativeTests := 0
 		for _, test := range tests {
 			mutex.Lock()
 			mapperResult[test.Year]++
+			if test.Resultado == "POSITIVO" {
+				localPositiveTests++
+			}
+			if test.Resultado == "NEGATIVO" {
+				localNegativeTests++
+			}
+			totalTests++
 			mutex.Unlock()
 		}
+		mutex.Lock()
+		positiveTests += localPositiveTests
+		negativeTests += localNegativeTests
+		mutex.Unlock()
 	}
 
-	// Proceso de Map en lotes de 10,000 con concurrencia
-	batchSize := 10000
+	batchSize := 1000
 	var batch []CovidTest
 	var wg sync.WaitGroup
 
@@ -50,11 +65,12 @@ func main() {
 		fields := strings.Split(line, ";")
 		if len(fields) >= 3 {
 			dateStr := fields[2]
+			resultado := fields[14]
 			date, err := time.Parse("20060102", dateStr)
 			if err == nil {
 				year := date.Year()
 				numeroString := strconv.Itoa(year)
-				batch = append(batch, CovidTest{Year: numeroString})
+				batch = append(batch, CovidTest{Year: numeroString, Resultado: resultado})
 				if len(batch) == batchSize {
 					wg.Add(1)
 					go mapFunction(batch, &wg)
@@ -73,22 +89,17 @@ func main() {
 		go mapFunction(batch, &wg)
 	}
 
+	wg.Wait()
 	endTime := time.Now()
 	elapsedTime := endTime.Sub(startTime)
 	fmt.Printf("Tiempo transcurrido: %s\n", elapsedTime)
 
-	wg.Wait()
+	positivityRate := float64(positiveTests) / float64(totalTests) * 100
+	negativityRate := float64(negativeTests) / float64(totalTests) * 100
 
-	// Ordenar los resultados por año (ascendente)
-	var years []string
-	for year := range mapperResult {
-		years = append(years, year)
-	}
-	sort.Strings(years)
-
-	// Imprimir los resultados ordenados
-	for _, year := range years {
-		count := mapperResult[year]
-		fmt.Printf("Año %s: %d pruebas\n", year, count)
-	}
+	fmt.Printf("Número total de pruebas: %d\n", totalTests)
+	fmt.Printf("Número de pruebas positivas: %d\n", positiveTests)
+	fmt.Printf("Número de pruebas negativas: %d\n", negativeTests)
+	fmt.Printf("Tasa de positividad: %.2f%%\n", positivityRate)
+	fmt.Printf("Tasa de negatividad: %.2f%%\n", negativityRate)
 }

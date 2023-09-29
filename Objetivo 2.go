@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strings"
 	"sync"
 	"time"
@@ -14,6 +15,11 @@ type CovidTest struct {
 	Departamento string
 	Provincia    string
 	Distrito     string
+}
+
+type GeographicResult struct {
+	Location string
+	Count    int
 }
 
 func main() {
@@ -42,7 +48,8 @@ func main() {
 		}
 	}
 
-	batchSize := 10000
+	// Proceso de Map en lotes de 1,000 con concurrencia
+	batchSize := 1000
 	var batch []CovidTest
 	var wg sync.WaitGroup
 
@@ -77,13 +84,27 @@ func main() {
 
 	wg.Wait() // Esperar a que todas las goroutines finalicen
 
+	// Convertir el mapa en un slice para ordenarlo
+	var geographicResults []GeographicResult
+	for geoKey, count := range geographicResult {
+		geographicResults = append(geographicResults, GeographicResult{
+			Location: geoKey,
+			Count:    count,
+		})
+	}
+
+	// Ordenar los resultados por número de pruebas (ascendente)
+	sort.Slice(geographicResults, func(i, j int) bool {
+		return geographicResults[i].Count < geographicResults[j].Count
+	})
+
 	endTime := time.Now()
 	elapsedTime := endTime.Sub(startTime)
 
-	// Resultados de pruebas por ubicación geográfica
-	fmt.Println("Resultados geográficos:")
-	for geoKey, count := range geographicResult {
-		fmt.Printf("Ubicación: %s, Pruebas: %d\n", geoKey, count)
+	// Resultados de pruebas por ubicación geográfica ordenados
+	fmt.Println("Resultados geográficos ordenados:")
+	for _, result := range geographicResults {
+		fmt.Printf("Ubicación: %s, Pruebas: %d\n", result.Location, result.Count)
 	}
 
 	fmt.Printf("Tiempo transcurrido: %s\n", elapsedTime)
