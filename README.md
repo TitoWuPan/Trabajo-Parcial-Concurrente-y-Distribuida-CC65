@@ -2,9 +2,9 @@
 Programación Concurrente y Distribuida
 
 ## Integrantes :
-- Guillén Rojas, Daniel Carlos		U201920113
-- Wu Pan, Tito Peng 			U201921200
-- Sebastian Gonzales			U201923816
+- Guillén Rojas, Daniel Carlos	-	U201920113
+- Wu Pan, Tito Peng 	-		U201921200
+- Sebastian Gonzales	-		U201923816
 
 # Planteamiento del problema
 
